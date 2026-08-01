@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Браузерная карточная игра 108: комнаты, боты, спецкарты и вылет после 108 очков."
+    />
+    <title>108</title>
+    <script type="module" crossorigin src="./assets/index-DWozHWSV.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D10MVFs6.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">К столу</a>
+    <div id="app">
+      <section class="intro-screen" id="introScreen" aria-label="Первый вход">
+        <div class="intro-card">
+          <div class="logo-lockup">
+            <span class="brand-mark" aria-hidden="true">108</span>
+            <div>
+              <h1>108</h1>
+              <p>Скинь карты. Не набери 108.</p>
+            </div>
+          </div>
+
+          <form class="intro-form" id="introForm" novalidate>
+            <div class="profile-preview">
+              <span class="profile-avatar" id="introAvatarPreview" aria-hidden="true">В</span>
+              <div>
+                <strong>Как к тебе обращаться за столом?</strong>
+                <span>Имя сохранится в этом браузере.</span>
+              </div>
+            </div>
+            <label for="introNameInput">Имя игрока</label>
+            <input
+              id="introNameInput"
+              autocomplete="nickname"
+              enterkeyhint="done"
+              maxlength="18"
+              placeholder="Например, Азиз"
+            />
+            <p class="field-error" id="introNameError" aria-live="polite"></p>
+            <button class="primary-button" type="submit">Продолжить</button>
+            <button class="plain-button" id="introRulesButton" type="button" data-overlay-trigger="rules">Как играть</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="lobby-screen is-hidden" id="lobbyScreen" aria-label="Лобби">
+        <header class="screen-bar">
+          <div class="logo-lockup">
+            <span class="brand-mark" aria-hidden="true">108</span>
+            <div>
+              <h1>108 онлайн</h1>
+              <p>Скинь карты. Не набери 108.</p>
+            </div>
+          </div>
+          <div class="bar-actions">
+            <button class="profile-pill" id="lobbyProfileButton" type="button" data-overlay-trigger="profile">
+              <span id="lobbyAvatarSmall" aria-hidden="true">В</span>
+              <span id="lobbyNameLabel">Вы</span>
+            </button>
+            <button class="secondary-button" id="lobbyRulesButton" type="button" data-overlay-trigger="rules">Правила</button>
+          </div>
+        </header>
+
+        <main class="lobby-layout">
+          <section class="lobby-hero">
+            <div>
+              <span class="section-kicker">карточная партия</span>
+              <h2>Играй короткими конами с ботами или друзьями по коду</h2>
+            </div>
+            <button class="primary-button play-bots-button" id="playBotsButton" type="button">Играть с ботами</button>
+          </section>
+
+          <section class="lobby-card private-room-card" aria-label="Приватная комната">
+            <div class="panel-title">
+              <span>Приватная комната</span>
+              <strong id="roomMode">Локально</strong>
+            </div>
+            <form class="join-form" id="joinRoomForm" novalidate>
+              <label for="roomJoinInput">Код друга</label>
+              <div class="input-action-row">
+                <input id="roomJoinInput" autocomplete="off" inputmode="latin" placeholder="R8P1" />
+                <button class="secondary-button" id="joinRoomButton" type="submit">Войти по коду</button>
+              </div>
+            </form>
+            <fieldset class="room-size-picker" aria-label="Количество игроков">
+              <legend>Игроков в комнате</legend>
+              <label>
+                <input type="radio" name="roomSize" value="2" />
+                <span>2</span>
+              </label>
+              <label>
+                <input type="radio" name="roomSize" value="3" />
+                <span>3</span>
+              </label>
+              <label>
+                <input type="radio" name="roomSize" value="4" checked />
+                <span>4</span>
+              </label>
+            </fieldset>
+            <div class="room-actions">
+              <button class="primary-button" id="createRoomButton" type="button">Создать комнату</button>
+              <button class="secondary-button" id="copyRoomCodeButton" type="button" disabled>Скопировать код</button>
+            </div>
+            <p class="room-status" id="roomStatus" aria-live="polite">
+              Хост держит вкладку открытой, друзья входят по короткому коду.
+            </p>
+          </section>
+
+          <section class="lobby-card open-tables-card" aria-label="Открытые столы">
+            <div class="panel-title">
+              <span>Открытые столы</span>
+              <strong>по коду</strong>
+            </div>
+            <div class="empty-state">
+              <strong>Публичного списка пока нет</strong>
+              <p>В этой версии комнаты работают через приватный код. Для быстрой партии запускай стол с ботами.</p>
+            </div>
+          </section>
+        </main>
+      </section>
+
+      <section class="waiting-screen is-hidden" id="waitingScreen" aria-label="Комната ожидания">
+        <header class="screen-bar">
+          <div class="logo-lockup">
+            <span class="brand-mark" aria-hidden="true">108</span>
+            <div>
+              <h1>Комната</h1>
+              <p>Все игроки должны нажать «Готов».</p>
+            </div>
+          </div>
+          <div class="table-room-badge">
+            <span>Код</span>
+            <strong id="waitingRoomCode">----</strong>
+          </div>
+          <div class="bar-actions">
+            <button class="secondary-button" id="waitingCopyCodeButton" type="button">Скопировать код</button>
+            <button class="secondary-button" id="waitingLeaveButton" type="button">Вернуться в лобби</button>
+          </div>
+        </header>
+
+        <main class="waiting-layout">
+          <section class="waiting-card">
+            <div class="panel-title">
+              <span>Игроки</span>
+              <strong id="waitingCountLabel">1 / 4</strong>
+            </div>
+            <div class="waiting-slots" id="waitingSlots"></div>
+            <p class="room-status" id="waitingStatus" aria-live="polite">
+              Поделись кодом и дождись игроков.
+            </p>
+            <button class="primary-button ready-button" id="readyButton" type="button">Готов</button>
+          </section>
+        </main>
+      </section>
+
+      <section class="game-screen is-hidden" id="gameScreen" aria-label="Игровой стол">
+        <header class="screen-bar game-bar">
+          <div class="logo-lockup">
+            <span class="brand-mark" aria-hidden="true">108</span>
+            <div>
+              <h1>108</h1>
+              <p id="roundLabel">Кон 1</p>
+            </div>
+          </div>
+          <div class="table-room-badge">
+            <span id="gameRoomLabel">Игра с ботами</span>
+            <strong id="gameRoomCode">локально</strong>
+          </div>
+          <div class="bar-actions">
+            <button class="profile-pill" id="gameProfileButton" type="button" data-overlay-trigger="profile">
+              <span id="gameAvatarSmall" aria-hidden="true">В</span>
+              <span id="gameNameLabel">Вы</span>
+            </button>
+            <button class="secondary-button" id="gameRulesButton" type="button" data-overlay-trigger="rules">Правила</button>
+            <button class="secondary-button" id="copyGameCodeButton" type="button" hidden>Скопировать код</button>
+            <button class="secondary-button" id="backToLobbyButton" type="button">Вернуться в лобби</button>
+            <button class="secondary-button" id="newMatchButton" type="button">Новый матч</button>
+          </div>
+        </header>
+
+        <main class="game-shell" id="main">
+          <section class="score-panel" aria-label="Счет">
+            <div class="panel-title">
+              <span>Счет</span>
+              <strong>меньше лучше</strong>
+            </div>
+            <p class="room-status compact" id="tableStatus" aria-live="polite">Локальная игра с ботами.</p>
+            <div class="players-list" id="playersList"></div>
+          </section>
+
+          <section class="table-zone" aria-label="Игровой стол">
+            <div class="turn-strip" id="turnStrip" aria-live="polite"></div>
+
+            <div class="felt">
+              <div class="table-seats" id="tableSeats" aria-label="Игроки за столом"></div>
+              <div class="showdown-layer" id="showdownLayer" aria-live="polite"></div>
+              <img class="table-mark" src="./table-mark.svg" alt="" aria-hidden="true" />
+              <div class="pile-wrap">
+                <div class="deck-stack" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <p>Колода: <strong id="deckCount">0</strong></p>
+              </div>
+              <div class="discard-wrap">
+                <div id="discardCard"></div>
+                <p id="calledSuitLabel"></p>
+              </div>
+            </div>
+
+            <div class="effect-bar" id="effectBar"></div>
+
+            <section class="hand-zone" aria-label="Ваши карты">
+              <div class="hand-head">
+                <div>
+                  <span>Ваша рука</span>
+                  <strong id="handCount">0 карт</strong>
+                </div>
+                <div class="hand-actions">
+                  <button class="play-selected-button" id="playSelectedButton" type="button" hidden>Кинуть</button>
+                  <button class="pass-button" id="passButton" type="button" hidden>Пас</button>
+                  <button class="draw-button" id="drawButton" type="button">Взять карту</button>
+                </div>
+              </div>
+              <div class="hand" id="humanHand"></div>
+            </section>
+          </section>
+
+          <aside class="activity-panel" aria-label="События">
+            <div class="panel-title">
+              <span>События</span>
+              <strong id="discardCount">0 в сбросе</strong>
+            </div>
+            <ol class="move-log" id="moveLog" aria-live="polite"></ol>
+          </aside>
+        </main>
+      </section>
+    </div>
+
+    <div class="popover-layer" id="popoverLayer" aria-hidden="true">
+      <section class="popover-panel profile-popover" id="profileOverlay" role="dialog" aria-labelledby="profileTitle">
+        <div class="popover-head">
+          <h2 id="profileTitle">Профиль</h2>
+          <button class="close-button" type="button" data-close-overlay aria-label="Закрыть">×</button>
+        </div>
+        <form id="profileForm" class="profile-form" novalidate>
+          <div class="profile-preview compact-preview">
+            <span class="profile-avatar" id="profileAvatarPreview" aria-hidden="true">В</span>
+            <span>Это имя видят игроки за столом.</span>
+          </div>
+          <label for="profileNameInput">Имя игрока</label>
+          <input id="profileNameInput" maxlength="18" autocomplete="nickname" />
+          <p class="field-error" id="profileNameError" aria-live="polite"></p>
+          <button class="primary-button" type="submit">Сохранить</button>
+        </form>
+      </section>
+
+      <section class="popover-panel rules-popover" id="rulesOverlay" role="dialog" aria-labelledby="rulesTitle">
+        <div class="popover-head">
+          <h2 id="rulesTitle">Как играть</h2>
+          <button class="close-button" type="button" data-close-overlay aria-label="Закрыть">×</button>
+        </div>
+        <div class="rules-list">
+          <article><strong>Цель</strong><span>Набери меньше всех очков. Больше 108 — вылет, ровно 108 — счет становится 54.</span></article>
+          <article><strong>Ход</strong><span>Клади карту той же масти или того же достоинства. Если нет подходящей — бери одну.</span></article>
+          <article><strong>Дама</strong><span>Козырь на любую карту, кроме семерки. После дамы обязательно выбирается масть.</span></article>
+          <article><strong>7</strong><span>Следующий берет 2, 4, 6 или 8 карт, если не продолжит цепочку семеркой.</span></article>
+          <article><strong>6</strong><span>Шестерку нужно закрыть еще одной картой. Если нечем — берется одна карта.</span></article>
+          <article><strong>Туз</strong><span>Следующий игрок пропускает ход.</span></article>
+          <article><strong>Д♠</strong><span>Осталась одной — +40. Финиш последней пиковой дамой — −40.</span></article>
+        </div>
+      </section>
+
+      <section class="popover-panel phrase-popover" id="phraseMenu" role="dialog" aria-labelledby="phraseTitle">
+        <div class="popover-head">
+          <h2 id="phraseTitle">Фразы</h2>
+          <button class="close-button" type="button" data-close-overlay aria-label="Закрыть">×</button>
+        </div>
+        <div class="phrase-buttons" id="phraseButtons"></div>
+        <form class="phrase-custom-form" id="phraseCustomForm" novalidate>
+          <input id="phraseCustomInput" maxlength="48" autocomplete="off" placeholder="Своя фраза" />
+          <button class="phrase-send-button" type="submit">Сказать</button>
+        </form>
+        <p class="field-error phrase-error" id="phraseCustomError" aria-live="polite"></p>
+        <ol class="phrase-feed" id="phraseFeed" aria-live="polite"></ol>
+      </section>
+
+      <section class="popover-panel confirm-popover" id="leaveConfirmOverlay" role="dialog" aria-labelledby="leaveTitle">
+        <div class="popover-head">
+          <h2 id="leaveTitle">Выйти из комнаты?</h2>
+          <button class="close-button" type="button" data-close-overlay aria-label="Закрыть">×</button>
+        </div>
+        <p>Текущее соединение будет закрыто, старое состояние комнаты очистится.</p>
+        <div class="modal-actions">
+          <button class="secondary-button" id="stayAtTableButton" type="button">Остаться</button>
+          <button class="primary-button danger-action" id="confirmLeaveButton" type="button">Выйти</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="modal-backdrop" id="suitModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="suitTitle">
+        <h2 id="suitTitle">Закажите масть</h2>
+        <p>После дамы следующая карта должна совпасть с выбранной мастью.</p>
+        <div class="suit-picker" id="suitPicker"></div>
+        <div class="modal-actions suit-modal-actions">
+          <button class="secondary-button" id="cancelSuitButton" type="button">Отмена</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="roundModal" aria-hidden="true">
+      <div class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="roundTitle">
+        <h2 id="roundTitle">Кон завершен</h2>
+        <button class="winner-phrase-button" id="winnerPhraseButton" type="button" hidden>ПАаЩИТАЙ</button>
+        <div class="summary-list" id="summaryList"></div>
+        <div class="modal-actions">
+          <button class="secondary-button" id="nextRoundButton" type="button">Следующий кон</button>
+          <button class="primary-button" id="restartFromSummaryButton" type="button">Новый матч</button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
